@@ -5,8 +5,8 @@ window.log = function () {
 	Application.console.log.call(Application.console.log, args);
 };
 
-$(function () {
+Aloha.ready(function () {
 	Aloha.jQuery('#editable').aloha();
-}); // on dom ready
+});
 
 })();
