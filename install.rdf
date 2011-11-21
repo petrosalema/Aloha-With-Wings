@@ -4,10 +4,13 @@
 	 xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
 	<Description about="urn:mozilla:install-manifest">
+
 		<em:id>aloha_with_wings@petrosalema.com</em:id>
 		<em:name>Aloha With Wings</em:name>
 		<em:version>1.0</em:version>
 		<em:creator>Petro Salema</em:creator>
+		<em:description>Alohafies Thunderbird.</em:description>
+		<em:homepageURL>http://www.aloha-editor.org/</em:homepageURL>
 
 		<em:targetApplication>
 			<Description>
@@ -18,4 +21,5 @@
 		</em:targetApplication>
 
 	</Description>
+	
 </RDF>
