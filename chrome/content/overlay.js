@@ -1,43 +1,124 @@
-function log () {
-	var args = Array.prototype.concat.apply(['Aloha: '], arguments);
+/**
+ * References:
+ *	http://www.koders.com/javascript/fid58899A0E5FA5EAC7758A368EC9579A513F86A396.aspx?s=search#L876
+ */
+(function(undefined) {
+'use strict'
+
+var DEBUGGING = true;
+var alohaWindow;
+var composeWindow;
+
+function log() {
+	var args = Array.prototype.concat.apply(['ALOHA WITH WINGS says'], arguments);
 	Application.console.log.call(Application.console.log, args);
 };
 
-window.addEventListener('load', function __overlayOnload(ev) {
+function error() {
+	var args = Array.prototype.concat.apply(['ALOHA WITH WINGS says'], arguments);
+	Components.utils.reportError.call(Components.utils.reportError, args);
+};
+
+var debug = DEBUGGING ? log : function() {};
+
+function checkWindows() {
+	if (!composeWindow) {
+		error('Could not find composeWindow');
+		return false;
+	}
+
+	if (!alohaWindow) {
+		error('Could not find alohaWindow');
+		return false;
+	}
+
+	return true;
+};
+
+/**
+ * @param {Event} event
+ */
+function onOverlayLoaded(event) {
+	debug('onOverlayLoaded');
+	composeWindow = document.getElementById('content-frame');
+	if (composeWindow) {
+		// If we make the original editor invisible, it become impossible to send
+		// messages, so instead of setting the hidden attribute to true, we will
+		// change the flex attribute, so that our style sheet can make the height
+		// original editor very small
+		// composeWindow.flex = false;
+	}
+	alohaWindow = document.getElementById('aloha-editor');
 	document.getElementById('FormatToolbar').hidden = true;
-	
-	var origEditor = document.getElementById('content-frame');
-	var alohaEditor = document.getElementById('aloha-editor');
-	
-	// If we make the original editor invisible, it become impossible to send
-	// messages...
-	// origEditor.hidden = true;
-	// ... so we wil make it very very small instead
-	origEditor.flex = false;
-	
-	setTimeout(function () {
-		// Copy and signatures into the Aloha Editor frame
-		var body = origEditor.contentDocument.getElementsByTagName('body');
-		var editable = alohaEditor.contentDocument.getElementById('editable');
-		if (body[0].innerHTML != '') {
-			editable.innerHTML = body[0].innerHTML;
+};
+
+/**
+ * https://developer.mozilla.org/en/Extensions/Thunderbird/HowTos/Common_Thunderbird_Use_Cases/Compose_New_Message
+ *
+ * @param {Event} event
+ */
+function onSendMessage(event) {
+	debug('onSendMessage');
+
+	if (!checkWindows()) {
+		return;
+	}
+
+	var msgType = document.getElementById('msgcomposeWindow').getAttribute('msgtype');
+
+	// Proceed only if this is actually a send event
+	if (!(msgType === nsIMsgCompDeliverMode.Now
+		|| msgType === nsIMsgCompDeliverMode.Later)) {
+		return;
+	}
+
+	var alohaMessage = alohaWindow.contentDocument.getElementById('aloha-msg').innerHTML;
+	composeWindow.contentDocument.getElementsByTagName('body')[0].innerHTML = alohaMessage;
+};
+
+/**
+ * @param {Event} event
+ */
+function onWindowInit(event) {
+	gMsgCompose.RegisterStateListener({
+		NotifyComposeFieldsReady: function() {
+			debug('NotifyComposeFieldsReady');
+		},
+
+		NotifyComposeBodyReady: function() {
+			debug('NotifyComposeBodyReady');
+			if (checkWindows()) {
+				// Copy the contents that Thunderbird put into its original
+				// editor into the aloha editor, but only do so if there is
+				// indeed something to copy.
+				var body = composeWindow.contentDocument.getElementsByTagName('body');
+				if (body[0].innerHTML !== '') {
+					var msgElement = alohaWindow.contentDocument.getElementById('aloha-msg');
+					if (msgElement) {
+						msgElement.innerHTML = body[0].innerHTML;
+					}
+				}
+			}
+		},
+
+		ComposeProcessDone: function(aResult) {
+			debug('ComposeProcessDone');
+		},
+
+		SaveInFolderDone: function(folderURI) {
+			debug('SaveInFolderDone');
 		}
-	}, 1000);
-	
-	// Duck-type the original GenericSendMessage function defined in
-	// "MsgComposeCommands.js"
-	// This function is called when saving and/or sending messages, and
-	// therefore allows us to intercept whenever the contents of the email are
-	// needed, and to copy the contents in Aloha-Editor back into the original
-	// Editor.
-	// Source:  http://www.koders.com/javascript/fid58899A0E5FA5EAC7758A368EC9579A513F86A396.aspx?s=search#L876
-	GenericSendMessage = (function (origSendMsg) {
-		return function () {
-			var editable = alohaEditor.contentDocument.getElementById('editable');
-			var body = origEditor.contentDocument.getElementsByTagName('body');
-			body[0].innerHTML = editable.innerHTML;
-			origEditor.hidden = false;
-			origSendMsg.apply(this, arguments);
-		};
-	})(GenericSendMessage);
-}, false);
+	});
+};
+
+// Initialize at overlay onload event
+// https://developer.mozilla.org/en/Code_snippets/On_page_load
+window.addEventListener('load', onOverlayLoaded, false);
+
+// This event fires every time the window is opened
+window.addEventListener('compose-window-init', onWindowInit, true);
+
+// Intercept message sending
+// https://developer.mozilla.org/en/Extensions/Thunderbird/HowTos/Common_Thunderbird_Use_Cases/Compose_New_Message
+window.addEventListener('compose-send-message', onSendMessage, true);
+})();
