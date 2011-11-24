@@ -1,0 +1,3 @@
+[submodule "chrome/content/aloha"]
+	path = chrome/content/aloha
+	url = git@github.com:petro065/Aloha-Editor.git
