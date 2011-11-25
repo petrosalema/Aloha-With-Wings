@@ -72,15 +72,10 @@ function onOverlayLoaded(event) {
 			origSendMsg.apply(this, arguments);
 		};
 	})(GenericSendMessage);
-};
-
-/**
- * https://developer.mozilla.org/en/Extensions/Thunderbird/HowTos/Common_Thunderbird_Use_Cases/Compose_New_Message
- *
- * @param {Event} event
- */
-function onSendMessage(event) {
-	debug('onSendMessage');
+	
+	jQuery(composeWindow).parent().resize(function() {
+		jQuery(alohaWindow).height(jQuery(this).height());
+	});
 };
 
 /**
@@ -132,22 +127,6 @@ function onWindowClose(event) {
 	debug('onWindowClose');
 	alohaWindow.contentDocument.getElementById('aloha-msg').innerHTML = '';
 };
-
-/**
- * Resize the aloha window, once
- */
-var isWindowResized = false;
-function onResize(event) {
-	if (!isWindowResized) {
-		var h = jQuery(composeWindow).height();
-		if (typeof h === 'number') {
-			isWindowResized = true;
-			jQuery(alohaWindow).height(h);
-		}
-	}
-};
-
-window.addEventListener('resize', onResize, false);
 
 // Initialize at overlay onload event
 // https://developer.mozilla.org/en/Code_snippets/On_page_load
