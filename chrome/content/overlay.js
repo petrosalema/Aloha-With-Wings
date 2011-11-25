@@ -50,6 +50,35 @@ function onOverlayLoaded(event) {
 	}
 	alohaWindow = document.getElementById('aloha-editor');
 	document.getElementById('FormatToolbar').hidden = true;
+
+	// Duck-type the original GenericSendMessage function defined in
+	// "MsgComposeCommands.js"
+	// This function is called when saving and/or sending messages, and
+	// therefore allows us to intercept whenever the contents of the email are
+	// needed, and to copy the contents in Aloha-Editor back into the original
+	// Editor.
+	// Source:  http://www.koders.com/javascript/fid58899A0E5FA5EAC7758A368EC9579A513F86A396.aspx?s=search#L876
+	GenericSendMessage = (function (origSendMsg) {
+		return function () {
+			if (!checkWindows()) {
+				return;
+			}
+
+			var msgType = document.getElementById('msgcomposeWindow').getAttribute('msgtype');
+
+			// Proceed only if this is actually a send event
+			if (msgType != nsIMsgCompDeliverMode.Now
+				&& msgType != nsIMsgCompDeliverMode.Later) {
+				debug('Will not intercept message because ' + msgType +
+					' is not a send event');
+				return;
+			}
+
+			var alohaMessage = alohaWindow.contentDocument.getElementById('aloha-msg').innerHTML;
+			composeWindow.contentDocument.getElementsByTagName('body')[0].innerHTML = alohaMessage;
+			origSendMsg.apply(this, arguments);
+		};
+	})(GenericSendMessage);
 };
 
 /**
@@ -59,23 +88,6 @@ function onOverlayLoaded(event) {
  */
 function onSendMessage(event) {
 	debug('onSendMessage');
-
-	if (!checkWindows()) {
-		return;
-	}
-
-	var msgType = document.getElementById('msgcomposeWindow').getAttribute('msgtype');
-
-	// Proceed only if this is actually a send event
-	if (msgType != nsIMsgCompDeliverMode.Now
-		&& msgType != nsIMsgCompDeliverMode.Later) {
-		debug('Will not intercept message because ' + msgType
-			+ ' is not a send event');
-		return;
-	}
-
-	var alohaMessage = alohaWindow.contentDocument.getElementById('aloha-msg').innerHTML;
-	composeWindow.contentDocument.getElementsByTagName('body')[0].innerHTML = alohaMessage;
 };
 
 /**
@@ -105,6 +117,11 @@ function onWindowInit(event) {
 			}
 		},
 
+		/**
+		 * Resets the editor contents, for the next time it is called up.
+		 *
+		 * @param {?} aResult
+		 */
 		ComposeProcessDone: function(aResult) {
 			debug('ComposeProcessDone');
 		},
@@ -115,12 +132,23 @@ function onWindowInit(event) {
 	});
 };
 
+/**
+ * @param {Event} event
+ */
+function onWindowClose(event) {
+	debug('onWindowClose');
+	alohaWindow.contentDocument.getElementById('aloha-msg').innerHTML = '';
+};
+
 // Initialize at overlay onload event
 // https://developer.mozilla.org/en/Code_snippets/On_page_load
 window.addEventListener('load', onOverlayLoaded, false);
 
-// This event fires every time the window is opened
+// Fires every time the window is opened
 window.addEventListener('compose-window-init', onWindowInit, true);
+
+// Fires every time the window is closed
+window.addEventListener('compose-window-close', onWindowClose, true);
 
 // Intercept message sending
 // https://developer.mozilla.org/en/Extensions/Thunderbird/HowTos/Common_Thunderbird_Use_Cases/Compose_New_Message

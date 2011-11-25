@@ -23,12 +23,10 @@
 	                            extra/flag-icons,
 	                            extra/formatlesspaste"></script>
 	<script>
-		(function () {
-			window.log = function () {
-				var args = Array.prototype.concat.apply(['Aloha: '], arguments);
-				Application.console.log.call(Application.console.log, args);
-			};
-		})();
+		window.log = function () {
+			var args = Array.prototype.concat.apply(['Aloha: '], arguments);
+			Application.console.log.call(Application.console.log, args);
+		};
 	</script>
 	<style>
 		body {
@@ -51,9 +49,7 @@
 </head>
 <body>
 	<div id="editable-wrapper">
-		<div id="aloha-msg" class="alohafy">
-			<p>Aloha! The world is waiting...</p>
-		</div>
+		<div id="aloha-msg" class="alohafy"></div>
 	</div>
 </body>
 </html>
