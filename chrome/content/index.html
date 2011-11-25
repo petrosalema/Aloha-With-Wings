@@ -30,25 +30,53 @@
 	</script>
 	<style>
 		body {
-			background: url(thunderbird-bg.jpg) repeat-x center top;
+			margin: 0;
+			padding: 40px 100px 0;
+			background: #fff url(thunderbird-bg.jpg) repeat-x center top;
 		}
-		#editable-wrapper {
-			-moz-box-shadow: 0 10px 25px rgba(0, 0, 0, .5); 
-			margin: 40px 100px;
+		#aloha-thunderbird-wrapper {
+			-moz-box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 			background: #fff;
 		}
+		#aloha-thunderbird-wrapper p {
+			margin-top: 0px;
+		}
 		#aloha-msg {
-			min-height: 300px;
 			padding: 10px;
 			color: #333;
 		}
-		p {
-			margin-top: 0px;
+		.aloha-thunderbird-modal-overlay {
+			position: fixed;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			height: 100%;
+			width: 100%;
+			z-index: 999;
+			
+			background-image: -webkit-radial-gradient(
+				rgba(127, 127, 127, 0.5) 0%,
+				rgba(127, 127, 127, 0.6) 40%,
+				rgba(0,   0,   0,   0.7) 100%
+			);
+			background-image: -moz-radial-gradient(
+				rgba(127, 127, 127, 0.5),
+				rgba(127, 127, 127, 0.6) 40%,
+				rgba(0,   0,   0,   0.7)
+			);
+		}
+		.aloha-thunderbird-modal-window {
+			position: fixed;
+			top: 0;
+			left: 0;
+			z-index: 9999;
+			font-family: Arial, sans-serif;
 		}
 	</style>
 </head>
 <body>
-	<div id="editable-wrapper">
+	<div id="aloha-thunderbird-wrapper">
 		<div id="aloha-msg" class="alohafy"></div>
 	</div>
 </body>

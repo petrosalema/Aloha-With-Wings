@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
-<?xml-stylesheet href="aloha-xul.css" type="text/css"?>
 <overlay xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
 		 id="aloha_with_wings">
-	<script type="application/javascript" src="chrome://aloha_with_wings/content/overlay.js" />
+	<!-- script type="application/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js" / -->
+	<!-- script type="application/javascript" src="chrome://aloha_with_wings/content/overlay.js" / -->
 	<vbox id="appcontent">
-		<editor id="aloha-editor" type="content-primary" flex="1" src="chrome://aloha_with_wings/content/index.html" />
+		<!-- editor id="aloha-editor-frame" type="content-primary" src="chrome://aloha_with_wings/content/index.html" / -->
 	</vbox>
 </overlay>

@@ -1,6 +1,6 @@
 /**
  * References:
- *	http://www.koders.com/javascript/fid58899A0E5FA5EAC7758A368EC9579A513F86A396.aspx?s=search#L876
+ * http://www.koders.com/javascript/fid58899A0E5FA5EAC7758A368EC9579A513F86A396.aspx?s=search#L876
  */
 (function(undefined) {
 'use strict'
@@ -41,14 +41,7 @@ function checkWindows() {
 function onOverlayLoaded(event) {
 	debug('onOverlayLoaded');
 	composeWindow = document.getElementById('content-frame');
-	if (composeWindow) {
-		// If we make the original editor invisible, it become impossible to send
-		// messages, so instead of setting the hidden attribute to true, we will
-		// change the flex attribute, so that our style sheet can make the height
-		// original editor very small
-		// composeWindow.flex = false;
-	}
-	alohaWindow = document.getElementById('aloha-editor');
+	alohaWindow = document.getElementById('aloha-editor-frame');
 	document.getElementById('FormatToolbar').hidden = true;
 
 	// Duck-type the original GenericSendMessage function defined in
@@ -139,6 +132,22 @@ function onWindowClose(event) {
 	debug('onWindowClose');
 	alohaWindow.contentDocument.getElementById('aloha-msg').innerHTML = '';
 };
+
+/**
+ * Resize the aloha window, once
+ */
+var isWindowResized = false;
+function onResize(event) {
+	if (!isWindowResized) {
+		var h = jQuery(composeWindow).height();
+		if (typeof h === 'number') {
+			isWindowResized = true;
+			jQuery(alohaWindow).height(h);
+		}
+	}
+};
+
+window.addEventListener('resize', onResize, false);
 
 // Initialize at overlay onload event
 // https://developer.mozilla.org/en/Code_snippets/On_page_load
