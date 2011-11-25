@@ -67,8 +67,10 @@ function onSendMessage(event) {
 	var msgType = document.getElementById('msgcomposeWindow').getAttribute('msgtype');
 
 	// Proceed only if this is actually a send event
-	if (!(msgType === nsIMsgCompDeliverMode.Now
-		|| msgType === nsIMsgCompDeliverMode.Later)) {
+	if (msgType != nsIMsgCompDeliverMode.Now
+		&& msgType != nsIMsgCompDeliverMode.Later) {
+		debug('Will not intercept message because ' + msgType
+			+ ' is not a send event');
 		return;
 	}
 
@@ -80,6 +82,8 @@ function onSendMessage(event) {
  * @param {Event} event
  */
 function onWindowInit(event) {
+	debug('onWindowInit');
+
 	gMsgCompose.RegisterStateListener({
 		NotifyComposeFieldsReady: function() {
 			debug('NotifyComposeFieldsReady');
