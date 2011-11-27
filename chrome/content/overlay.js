@@ -61,8 +61,8 @@ var XPCOM = {
 	 * https://developer.mozilla.org/en/Code_snippets/File_I%2F%2FO
 	 */
 	getSystemDirectory: function(directory) {
-		var dirId,
-		    path;
+		var dirId;
+		var path;
 
 		switch (directory) {
 		case 'profile':
@@ -91,16 +91,23 @@ var XPCOM = {
 		inputStream.close();
 		sInputStream.close();
 		return data;
+	},
+
+	changeDir: function(dir, path) {
+		var subdirs = path.split('/');
+		for (var i = 0; i < subdirs.length; ++i) {
+			dir.append(subdirs[i]);
+		}
 	}
 };
 
-function getExtensionDirectory() {
+function getExtensionDirectory(extensionId) {
 	var file = XPCOM.getSystemDirectory('profile');
 	if (!file) {
 		return null;
 	}
 	file.append('extensions');
-	file.append('aloha_with_wings@petrosalema.com');
+	file.append(extensionId);
 	if (file.isDirectory()) {
 		return file;
 	}
@@ -108,7 +115,9 @@ function getExtensionDirectory() {
 	return path ? XPCOM.createFileObj(path) : '';
 };
 
-var dir = getExtensionDirectory();
+var dir = getExtensionDirectory('aloha_with_wings@petrosalema.com');
+XPCOM.changeDir(dir, 'chrome/content/aloha/src/plugins');
+
 var dirs = XPCOM.getDirList(dir);
 debug('\n' + dirs.join('\n'));
 
