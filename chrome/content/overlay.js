@@ -118,8 +118,10 @@ function getExtensionDirectory(extensionId) {
 var dir = getExtensionDirectory('aloha_with_wings@petrosalema.com');
 XPCOM.changeDir(dir, 'chrome/content/aloha/src/plugins');
 
-var dirs = XPCOM.getDirList(dir);
-debug('\n' + dirs.join('\n'));
+debug(dir.path);
+
+// var dirs = XPCOM.getDirList(dir);
+// debug('\n' + dirs.join('\n'));
 
 function checkWindows() {
 	if (!composeWindow) {
@@ -160,12 +162,14 @@ function onOverlayLoaded(event) {
 			var msgType = document.getElementById('msgcomposeWindow').getAttribute('msgtype');
 
 			// Proceed only if this is actually a send event
+			/*
 			if (msgType != nsIMsgCompDeliverMode.Now
 				&& msgType != nsIMsgCompDeliverMode.Later) {
 				debug('Will not intercept message because ' + msgType +
 					' is not a send event');
 				return;
 			}
+			*/
 
 			var alohaMessage = alohaWindow.contentDocument.getElementById('aloha-msg').innerHTML;
 			composeWindow.contentDocument.getElementsByTagName('body')[0].innerHTML = alohaMessage;
