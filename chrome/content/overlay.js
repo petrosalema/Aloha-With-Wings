@@ -28,8 +28,9 @@ var debug = DEBUGGING ? log : function() {};
 var XPCOM = {
 
 	/**
-	 * @param {?String} path
-	 * @return {nsILocalFile}
+	 * @param {string=} path path to directory or file which the returned file
+	 *					object will point to
+	 * @return {nsILocalFile} file object
 	 */
 	createFileObj: function(path) {
 		var file = Cc['@mozilla.org/file/local;1']
@@ -39,8 +40,9 @@ var XPCOM = {
 	},
 
 	/**
-	 * @param {nsILocalFile}
-	 * @return {Array<String>} names of file contents
+	 * @param {nsILocalFile} file object is expected to be a directory
+	 * @return {array<string>} names of immediate sub directories of the given
+	 *							file object
 	 */
 	getDirList: function(file) {
 		var entries = file.directoryEntries;
@@ -58,7 +60,9 @@ var XPCOM = {
 	},
 
 	/**
-	 * https://developer.mozilla.org/en/Code_snippets/File_I%2F%2FO
+	 * @param {string} directory one of the system directory names defined
+	 *					here: https://developer.mozilla.org/en/Code_snippets/File_I%2F%2FO
+	 * @return {nsILocalFile} file object handler to system directory
 	 */
 	getSystemDirectory: function(directory) {
 		var dirId;
@@ -80,6 +84,10 @@ var XPCOM = {
 		return path ? XPCOM.createFileObj(path) : null;
 	},
 
+	/**
+	 * @param {nsILocalFile} file
+	 * @return {string} contents of file
+	 */
 	readFile: function(file) {
 		var inputStream = Cc['@mozilla.org/network/file-input-stream;1']
 							.createInstance(Ci.nsIFileInputStream);
@@ -93,6 +101,10 @@ var XPCOM = {
 		return data;
 	},
 
+	/**
+	 * @param {nsILocalFire} dir directory
+	 * @param {string} path path relative to dir
+	 */
 	changeDir: function(dir, path) {
 		var subdirs = path.split('/');
 		for (var i = 0; i < subdirs.length; ++i) {
@@ -101,6 +113,9 @@ var XPCOM = {
 	}
 };
 
+/**
+ * param {string} extensionId
+ */
 function getExtensionDirectory(extensionId) {
 	var file = XPCOM.getSystemDirectory('profile');
 	if (!file) {
@@ -123,6 +138,10 @@ debug(dir.path);
 // var dirs = XPCOM.getDirList(dir);
 // debug('\n' + dirs.join('\n'));
 
+/**
+ * return {boolean} true if both the composeWindow, and the alohaWindow handles
+ *					are valid.
+ */
 function checkWindows() {
 	if (!composeWindow) {
 		error('Could not find composeWindow');
@@ -146,13 +165,17 @@ function onOverlayLoaded(event) {
 	alohaWindow = document.getElementById('aloha-editor-frame');
 	document.getElementById('FormatToolbar').hidden = true;
 
-	// Duck-type the original GenericSendMessage function defined in
-	// "MsgComposeCommands.js"
-	// This function is called when saving and/or sending messages, and
-	// therefore allows us to intercept whenever the contents of the email are
-	// needed, and to copy the contents in Aloha-Editor back into the original
-	// Editor.
-	// Source:  http://www.koders.com/javascript/fid58899A0E5FA5EAC7758A368EC9579A513F86A396.aspx?s=search#L876
+	/**
+	 * Duck-type the original GenericSendMessage function defined in
+	 * "MsgComposeCommands.js"
+	 * This function is called when saving and/or sending messages, and
+	 * therefore allows us to intercept whenever the contents of the email are
+	 * needed, and to copy the contents in Aloha-Editor back into the original
+	 * Editor.
+	 * Source: http://www.koders.com/javascript/fid58899A0E5FA5EAC7758A368EC9579A513F86A396.aspx?s=search#L876
+	 *
+	 * @param {function} origSendMsg
+	 */
 	GenericSendMessage = (function (origSendMsg) {
 		return function () {
 			if (!checkWindows()) {
@@ -218,6 +241,9 @@ function onWindowInit(event) {
 			debug('ComposeProcessDone');
 		},
 
+		/**
+		 * @param {?} aResult
+		 */
 		SaveInFolderDone: function(folderURI) {
 			debug('SaveInFolderDone');
 		}
