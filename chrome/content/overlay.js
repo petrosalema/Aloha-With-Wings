@@ -99,7 +99,7 @@ var XPCOM = {
 	},
 
 	/**
-	 * @param {nsILocalFire} dir directory
+	 * @param {nsILocalFile} dir directory
 	 * @param {string} path path relative to dir
 	 */
 	changeDir: function(dir, path) {
@@ -112,19 +112,24 @@ var XPCOM = {
 
 /**
  * param {string} extensionId
+ * return {nsILocalFile} directory
  */
 function getExtensionDirectory(extensionId) {
 	var file = XPCOM.getSystemDirectory('profile');
-	if (!file) {
-		return null;
+	var dir;
+	if (file) {
+		file.append('extensions');
+		file.append(extensionId);
+		if (file.isDirectory()) {
+			dir = file;
+		} else {
+			var path = XPCOM.readFile(file);
+			if (path) {
+				dir = XPCOM.createFileObj(path);
+			}
+		}
 	}
-	file.append('extensions');
-	file.append(extensionId);
-	if (file.isDirectory()) {
-		return file;
-	}
-	var path = XPCOM.readFile(file);
-	return path ? XPCOM.createFileObj(path) : '';
+	return dir;
 };
 
 var dir = getExtensionDirectory('aloha_with_wings@petrosalema.com');
@@ -140,7 +145,7 @@ debug(dir.path);
  *					are valid.
  */
 function checkWindows() {
-	var windowsExist;
+	var windowsExist = true;
 
 	if (!composeWindow) {
 		error('Could not find composeWindow');
@@ -152,7 +157,7 @@ function checkWindows() {
 		windowsExist = false;
 	}
 
-	return windowExist;
+	return windowsExist;
 };
 
 /**
