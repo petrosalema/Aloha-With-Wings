@@ -132,11 +132,9 @@ function getExtensionDirectory(extensionId) {
 	return dir;
 };
 
-var dir = getExtensionDirectory('aloha_with_wings@petrosalema.com');
-XPCOM.changeDir(dir, 'chrome/content/aloha/src/plugins');
-
-debug(dir.path);
-
+// var dir = getExtensionDirectory('aloha_with_wings@petrosalema.com');
+// XPCOM.changeDir(dir, 'chrome/content/aloha/src/plugins');
+// debug(dir.path);
 // var dirs = XPCOM.getDirList(dir);
 // debug('\n' + dirs.join('\n'));
 
@@ -227,8 +225,30 @@ function onWindowInit(event) {
 				if (body[0].innerHTML !== '') {
 					var msgElement = alohaWindow.contentDocument.getElementById('aloha-msg');
 					if (msgElement) {
+						/*
+						composed_with:  _                          _ _ _              
+						   __ _| | ___ | |__   __ _        ___  __| (_) |_ ___  _ __  
+						  / _` | |/ _ \| '_ \ / _` | ____ / _ \/ _` | | __/ _ \| '__| 
+						 | (_| | | (_) | | | | (_| ||____|  __/ (_| | | || (_) | |    
+						  \__,_|_|\___/|_| |_|\__,_|      \___|\__,_|_|\__\___/|_|.com
+													"With Wings"
+						*/
+
+						var tagline = "\n--\n" +
+"Composed_with:  _                          _ _ _              \n" +
+"   __ _| | ___ | |__   __ _        ___  __| (_) |_ ___  _ __  \n" +
+"  / _` | |/ _ \\| '_ \\ / _` | ____ / _ \\/ _` | | __/ _ \\| '__| \n" +
+" | (_| | | (_) | | | | (_| ||____|  __/ (_| | | || (_) | |    \n" +
+"  \\__,_|_|\\___/|_| |_|\\__,_|      \\___|\\__,_|_|\\__\\___/|_|.com\n" +
+"                            \"With Wings\"";
+
+						jQuery(body).find('pre').prepend(tagline + '\n');
 						msgElement.innerHTML = body[0].innerHTML;
 					}
+				} else {
+					jQuery(body).prepend(
+						'<pre style="margin:0;padding:0;">' + tagline + '</pre>'
+					);
 				}
 			}
 		},
