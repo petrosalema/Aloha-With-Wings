@@ -2,6 +2,7 @@
  * References:
  * http://www.koders.com/javascript/fid58899A0E5FA5EAC7758A368EC9579A513F86A396.aspx?s=search#L876
  */
+
 (function(undefined) {
 'use strict'
 
@@ -24,12 +25,11 @@ function error() {
 
 var debug = DEBUGGING ? log : function() {};
 
-
 var XPCOM = {
 
 	/**
 	 * @param {string=} path path to directory or file which the returned file
-	 *					object will point to
+	 *                  object will point to.
 	 * @return {nsILocalFile} file object
 	 */
 	createFileObj: function(path) {
@@ -42,7 +42,7 @@ var XPCOM = {
 	/**
 	 * @param {nsILocalFile} file object is expected to be a directory
 	 * @return {array<string>} names of immediate sub directories of the given
-	 *							file object
+	 *                         file object
 	 */
 	getDirList: function(file) {
 		var entries = file.directoryEntries;
@@ -61,26 +61,23 @@ var XPCOM = {
 
 	/**
 	 * @param {string} directory one of the system directory names defined
-	 *					here: https://developer.mozilla.org/en/Code_snippets/File_I%2F%2FO
+	 *                 here: https://developer.mozilla.org/en/Code_snippets/File_I%2F%2FO
 	 * @return {nsILocalFile} file object handler to system directory
 	 */
 	getSystemDirectory: function(directory) {
 		var dirId;
 		var path;
-
 		switch (directory) {
 		case 'profile':
 			dirId = 'ProfD';
 			break;
 		}
-
 		if (dirId) {
 			path = Cc['@mozilla.org/file/directory_service;1']
 					.getService(Ci.nsIProperties)
 					.get(dirId, Ci.nsIFile)
 					.path;
 		}
-
 		return path ? XPCOM.createFileObj(path) : null;
 	},
 
@@ -143,17 +140,19 @@ debug(dir.path);
  *					are valid.
  */
 function checkWindows() {
+	var windowsExist;
+
 	if (!composeWindow) {
 		error('Could not find composeWindow');
-		return false;
+		windowsExist = false;
 	}
 
 	if (!alohaWindow) {
 		error('Could not find alohaWindow');
-		return false;
+		windowsExist = false;
 	}
 
-	return true;
+	return windowExist;
 };
 
 /**
@@ -165,23 +164,21 @@ function onOverlayLoaded(event) {
 	alohaWindow = document.getElementById('aloha-editor-frame');
 	document.getElementById('FormatToolbar').hidden = true;
 
-	/**
-	 * Duck-type the original GenericSendMessage function defined in
-	 * "MsgComposeCommands.js"
-	 * This function is called when saving and/or sending messages, and
-	 * therefore allows us to intercept whenever the contents of the email are
-	 * needed, and to copy the contents in Aloha-Editor back into the original
-	 * Editor.
-	 * Source: http://www.koders.com/javascript/fid58899A0E5FA5EAC7758A368EC9579A513F86A396.aspx?s=search#L876
-	 *
-	 * @param {function} origSendMsg
-	 */
+	// Duck-type the original GenericSendMessage function defined in
+	// "MsgComposeCommands.js"
+	// This function is called when saving and/or sending messages, and
+	// therefore allows us to intercept whenever the contents of the email are
+	// needed, and to copy the contents in Aloha-Editor back into the original
+	// Editor.
+	// Source: http://www.koders.com/javascript/fid58899A0E5FA5EAC7758A368EC9579A513F86A396.aspx?s=search#L876
+	//
+	// @param {function} origSendMsg
+	//
 	GenericSendMessage = (function (origSendMsg) {
 		return function () {
 			if (!checkWindows()) {
 				return;
 			}
-
 			var msgType = document.getElementById('msgcomposeWindow').getAttribute('msgtype');
 
 			// Proceed only if this is actually a send event
@@ -193,7 +190,6 @@ function onOverlayLoaded(event) {
 				return;
 			}
 			*/
-
 			var alohaMessage = alohaWindow.contentDocument.getElementById('aloha-msg').innerHTML;
 			composeWindow.contentDocument.getElementsByTagName('body')[0].innerHTML = alohaMessage;
 			origSendMsg.apply(this, arguments);
@@ -242,7 +238,7 @@ function onWindowInit(event) {
 		},
 
 		/**
-		 * @param {?} aResult
+		 * @param {?} folderURI
 		 */
 		SaveInFolderDone: function(folderURI) {
 			debug('SaveInFolderDone');
