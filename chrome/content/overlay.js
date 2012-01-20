@@ -3,7 +3,7 @@
  * http://www.koders.com/javascript/fid58899A0E5FA5EAC7758A368EC9579A513F86A396.aspx?s=search#L876
  */
 
-(function(undefined) {
+(function(global, undefined) {
 'use strict'
 
 var Cc = Components.classes;
@@ -13,30 +13,30 @@ var composeWindow;
 
 var DEBUGGING = true;
 /*
-	composed_with:  _                          _ _ _              
-	   __ _| | ___ | |__   __ _        ___  __| (_) |_ ___  _ __  
-	  / _` | |/ _ \| '_ \ / _` | ____ / _ \/ _` | | __/ _ \| '__| 
-	 | (_| | | (_) | | | | (_| ||____|  __/ (_| | | || (_) | |    
-	  \__,_|_|\___/|_| |_|\__,_|      \___|\__,_|_|\__\___/|_|.com
-								"With Wings"
+	Composed_with:  _                      _ _ _              
+	   __ _| | ___ | |__   __ _    ___  __| (_) |_ ___  _ __  
+	  / _` | |/ _ \| '_ \ / _` |  / _ \/ _` | | __/ _ \| '__| 
+	 | (_| | | (_) | | | | (_| | |  __/ (_| | | || (_) | |    
+	  \__,_|_|\___/|_| |_|\__,_|  \___|\__,_|_|\__\___/|_|.org
+							"With Wings"
 */
 var TAGLINE = "\n--\n" +
-"Composed_with:  _                          _ _ _              \n" +
-"   __ _| | ___ | |__   __ _        ___  __| (_) |_ ___  _ __  \n" +
-"  / _` | |/ _ \\| '_ \\ / _` | ____ / _ \\/ _` | | __/ _ \\| '__| \n" +
-" | (_| | | (_) | | | | (_| ||____|  __/ (_| | | || (_) | |    \n" +
-"  \\__,_|_|\\___/|_| |_|\\__,_|      \\___|\\__,_|_|\\__\\___/|_|.com\n" +
-"                            \"With Wings\"";
+"Composed_with:  _                      _ _ _              \n" +
+"   __ _| | ___ | |__   __ _    ___  __| (_) |_ ___  _ __  \n" +
+"  / _` | |/ _ \\| '_ \\ / _` |  / _ \\/ _` | | __/ _ \\| '__| \n" +
+" | (_| | | (_) | | | | (_| | |  __/ (_| | | || (_) | |    \n" +
+"  \\__,_|_|\\___/|_| |_|\\__,_|  \\___|\\__,_|_|\\__\\___/|_|.org\n" +
+"                       \"With Wings\"";
 
 function log() {
 	var args = Array.prototype.concat.apply(['ALOHA WITH WINGS says'], arguments);
 	Application.console.log.call(Application.console.log, args);
-};
+}
 
 function error() {
 	var args = Array.prototype.concat.apply(['ALOHA WITH WINGS says'], arguments);
 	Components.utils.reportError.call(Components.utils.reportError, args);
-};
+}
 
 var debug = DEBUGGING ? log : function() {};
 
@@ -161,7 +161,7 @@ function getExtensionDirectory(extensionId) {
 	}
 
 	return dir;
-};
+}
 
 // var dir = getExtensionDirectory('aloha_with_wings@petrosalema.com');
 // XPCOM.changeDir(dir, 'chrome/content/aloha/src/plugins');
@@ -187,7 +187,7 @@ function checkWindows() {
 	}
 
 	return windowsExist;
-};
+}
 
 /**
  * @param {Event} event
@@ -210,8 +210,8 @@ function onOverlayLoaded(event) {
 	 *
 	 * @param {function} origSendMsg
 	 */
-	GenericSendMessage = (function (origSendMsg) {
-		return function () {
+	GenericSendMessage = (function(origSendMsg) {
+		return function() {
 			if (!checkWindows()) {
 				return;
 			}
@@ -237,7 +237,7 @@ function onOverlayLoaded(event) {
 	jQuery(composeWindow).parent().resize(function() {
 		jQuery(alohaWindow).height(jQuery(this).height());
 	});
-};
+}
 
 /**
  * @param {Event} event
@@ -266,7 +266,7 @@ function onWindowInit(event) {
 			if (signatureBlock.length) {
 				signatureBlock.last().prepend(TAGLINE + '\n');
 			} else {
-				body.append('<pre class="moz-signature" '
+				mozBody.append('<p><br /></p><pre class="moz-signature" '
 					+ 'style="margin:0;padding:0;">' + TAGLINE + '</pre>');
 			}
 
@@ -291,7 +291,7 @@ function onWindowInit(event) {
 		}
 
 	});
-};
+}
 
 /**
  * @param {Event} event
@@ -299,19 +299,19 @@ function onWindowInit(event) {
 function onWindowClose(event) {
 	debug('onWindowClose');
 	alohaWindow.contentDocument.getElementById('aloha-msg').innerHTML = '';
-};
+}
 
 // Initialize at overlay onload event.
 // https://developer.mozilla.org/en/Code_snippets/On_page_load
-window.addEventListener('load', onOverlayLoaded, false);
+global.addEventListener('load', onOverlayLoaded, false);
 
 // Fires every time the window is opened.
-window.addEventListener('compose-window-init', onWindowInit, true);
+global.addEventListener('compose-window-init', onWindowInit, true);
 
 // Fires every time the window is closed.
-window.addEventListener('compose-window-close', onWindowClose, true);
+global.addEventListener('compose-window-close', onWindowClose, true);
 
 // Intercept message sending.
 // https://developer.mozilla.org/en/Extensions/Thunderbird/HowTos/Common_Thunderbird_Use_Cases/Compose_New_Message
-// window.addEventListener('compose-send-message', onSendMessage, true);
-})();
+// global.addEventListener('compose-send-message', onSendMessage, true);
+})(window);
