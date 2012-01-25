@@ -12,13 +12,14 @@ var alohaWindow;
 var composeWindow;
 
 var DEBUGGING = true;
+
 /*
 	Composed_with:  _                      _ _ _              
 	   __ _| | ___ | |__   __ _    ___  __| (_) |_ ___  _ __  
 	  / _` | |/ _ \| '_ \ / _` |  / _ \/ _` | | __/ _ \| '__| 
 	 | (_| | | (_) | | | | (_| | |  __/ (_| | | || (_) | |    
 	  \__,_|_|\___/|_| |_|\__,_|  \___|\__,_|_|\__\___/|_|.org
-							"With Wings"
+					 the future of content editing
 */
 var TAGLINE = "\n--\n" +
 "Composed_with:  _                      _ _ _              \n" +
@@ -26,7 +27,7 @@ var TAGLINE = "\n--\n" +
 "  / _` | |/ _ \\| '_ \\ / _` |  / _ \\/ _` | | __/ _ \\| '__| \n" +
 " | (_| | | (_) | | | | (_| | |  __/ (_| | | || (_) | |    \n" +
 "  \\__,_|_|\\___/|_| |_|\\__,_|  \\___|\\__,_|_|\\__\\___/|_|.org\n" +
-"                       \"With Wings\"";
+"                 the future of content editing";
 
 function log() {
 	var args = Array.prototype.concat.apply(['ALOHA WITH WINGS says'], arguments);
@@ -216,7 +217,8 @@ function onOverlayLoaded(event) {
 				return;
 			}
 
-			var msgType = document.getElementById('msgcomposeWindow').getAttribute('msgtype');
+			var msgType = document.getElementById('msgcomposeWindow')
+			                      .getAttribute('msgtype');
 
 			// Proceed only if this is actually a send event
 			/*
@@ -228,8 +230,10 @@ function onOverlayLoaded(event) {
 			}
 			*/
 
-			var alohaMessage = alohaWindow.contentDocument.getElementById('aloha-msg').innerHTML;
-			composeWindow.contentDocument.getElementsByTagName('body')[0].innerHTML = alohaMessage;
+			var alohaMsg = jQuery('#aloha-msg', alohaWindow.contentDocument);
+
+			jQuery('body', composeWindow.contentDocument).html(alohaMsg.html());
+
 			origSendMsg.apply(this, arguments);
 		};
 	})(GenericSendMessage);
