@@ -19,7 +19,7 @@ var DEBUGGING = true;
 	  / _` | |/ _ \| '_ \ / _` |  / _ \/ _` | | __/ _ \| '__| 
 	 | (_| | | (_) | | | | (_| | |  __/ (_| | | || (_) | |    
 	  \__,_|_|\___/|_| |_|\__,_|  \___|\__,_|_|\__\___/|_|.org
-					 the future of content editing
+                   the future of content editing              
 */
 var TAGLINE = "\n--\n" +
 "Composed_with:  _                      _ _ _              \n" +
@@ -27,7 +27,7 @@ var TAGLINE = "\n--\n" +
 "  / _` | |/ _ \\| '_ \\ / _` |  / _ \\/ _` | | __/ _ \\| '__| \n" +
 " | (_| | | (_) | | | | (_| | |  __/ (_| | | || (_) | |    \n" +
 "  \\__,_|_|\\___/|_| |_|\\__,_|  \\___|\\__,_|_|\\__\\___/|_|.org\n" +
-"                 the future of content editing";
+"               the future of content editing";
 
 function log() {
 	var args = Array.prototype.concat.apply(['ALOHA WITH WINGS says'], arguments);
