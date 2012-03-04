@@ -3,7 +3,7 @@
  * http://www.koders.com/javascript/fid58899A0E5FA5EAC7758A368EC9579A513F86A396.aspx?s=search#L876
  */
 
-(function(global, undefined) {
+(function (global, undefined) {
 'use strict'
 
 var Cc = Components.classes;
@@ -39,7 +39,7 @@ function error() {
 	Components.utils.reportError.call(Components.utils.reportError, args);
 }
 
-var debug = DEBUGGING ? log : function() {};
+var debug = DEBUGGING ? log : function () {};
 
 var XPCOM = {
 
@@ -48,7 +48,7 @@ var XPCOM = {
 	 *                  object will point to.
 	 * @return {nsILocalFile} File object.
 	 */
-	createFileObj: function(path) {
+	createFileObj: function (path) {
 		var file = Cc['@mozilla.org/file/local;1']
 					.createInstance(Ci.nsILocalFile);
 		file.initWithPath((path && typeof path === 'string') ? path : 'C:\\');
@@ -60,7 +60,7 @@ var XPCOM = {
 	 * @return {Array.<string>} Names of immediate sub directories of the given
 	 *                          file object.
 	 */
-	getDirList: function(file) {
+	getDirList: function (file) {
 		var entries = file.directoryEntries;
 		var entry;
 		var list = [];
@@ -82,7 +82,7 @@ var XPCOM = {
 	 *                 here: https://developer.mozilla.org/en/Code_snippets/File_I%2F%2FO
 	 * @return {nsILocalFile} File object handler to system directory.
 	 */
-	getSystemDirectory: function(directory) {
+	getSystemDirectory: function (directory) {
 		var dirId;
 		var path;
 
@@ -106,7 +106,7 @@ var XPCOM = {
 	 * @param {nsILocalFile} file
 	 * @return {string} Contents of file.
 	 */
-	readFile: function(file) {
+	readFile: function (file) {
 		var inputStream = Cc['@mozilla.org/network/file-input-stream;1']
 							.createInstance(Ci.nsIFileInputStream);
 		var sInputStream = Cc['@mozilla.org/scriptableinputstream;1']
@@ -127,11 +127,12 @@ var XPCOM = {
 	 * @param {nsILocalFile} dir Directory.
 	 * @param {string} path Path relative to dir.
 	 */
-	changeDir: function(dir, path) {
+	changeDir: function (dir, path) {
 		var subdirs = path.split('/');
 		var j = subdirs.length;
+		var i = 0;
 
-		for (var i = 0; i < j; ++i) {
+		for (; i < j; ++i) {
 			dir.append(subdirs[i]);
 		}
 	}
@@ -202,17 +203,17 @@ function onOverlayLoaded(event) {
 
 	/**
 	 * Duck-type the original GenericSendMessage function defined in
-	 * "MsgComposeCommands.js"
-	 * This function is called when saving and/or sending messages, and
-	 * therefore allows us to intercept whenever the contents of the email are
-	 * needed, and to copy the contents in Aloha-Editor back into the original
-	 * Editor.
+	 * "MsgComposeCommands.js".  This function is called when saving and/or
+	 * sending messages, and therefore allows us to intercept whenever the
+	 * contents of the email are needed, and to copy the contents in
+	 * Aloha-Editor back into the original Editor.
+	 *
 	 * Source: http://www.koders.com/javascript/fid58899A0E5FA5EAC7758A368EC9579A513F86A396.aspx?s=search#L876
 	 *
 	 * @param {function} origSendMsg
 	 */
-	GenericSendMessage = (function(origSendMsg) {
-		return function() {
+	GenericSendMessage = (function (origSendMsg) {
+		return function () {
 			if (!checkWindows()) {
 				return;
 			}
@@ -220,8 +221,8 @@ function onOverlayLoaded(event) {
 			var msgType = document.getElementById('msgcomposeWindow')
 			                      .getAttribute('msgtype');
 
-			// Proceed only if this is actually a send event
 			/*
+			// Proceed only if this is actually a send event
 			if (msgType != nsIMsgCompDeliverMode.Now
 				&& msgType != nsIMsgCompDeliverMode.Later) {
 				debug('Will not intercept message because ' + msgType +
@@ -232,13 +233,14 @@ function onOverlayLoaded(event) {
 
 			var alohaMsg = jQuery('#aloha-msg', alohaWindow.contentDocument);
 
-			jQuery('body', composeWindow.contentDocument).html(alohaMsg.html());
+			jQuery('body',
+				composeWindow.contentDocument).html(alohaMsg.html());
 
 			origSendMsg.apply(this, arguments);
 		};
 	})(GenericSendMessage);
 
-	jQuery(composeWindow).parent().resize(function() {
+	jQuery(composeWindow).parent().resize(function () {
 		jQuery(alohaWindow).height(jQuery(this).height());
 	});
 }
@@ -251,11 +253,11 @@ function onWindowInit(event) {
 
 	gMsgCompose.RegisterStateListener({
 
-		NotifyComposeFieldsReady: function() {
+		NotifyComposeFieldsReady: function () {
 			debug('NotifyComposeFieldsReady');
 		},
 
-		NotifyComposeBodyReady: function() {
+		NotifyComposeBodyReady: function () {
 			debug('NotifyComposeBodyReady');
 
 			if (!checkWindows()) {
@@ -283,14 +285,14 @@ function onWindowInit(event) {
 		 * Reset the editor contents, for the next time it is called up.
 		 * @param {?} aResult
 		 */
-		ComposeProcessDone: function(aResult) {
+		ComposeProcessDone: function (aResult) {
 			debug('ComposeProcessDone');
 		},
 
 		/**
 		 * @param {?} folderURI
 		 */
-		SaveInFolderDone: function(folderURI) {
+		SaveInFolderDone: function (folderURI) {
 			debug('SaveInFolderDone');
 		}
 
@@ -312,10 +314,10 @@ global.addEventListener('load', onOverlayLoaded, false);
 // Fires every time the window is opened.
 global.addEventListener('compose-window-init', onWindowInit, true);
 
-// Fires every time the window is closed.
 global.addEventListener('compose-window-close', onWindowClose, true);
 
 // Intercept message sending.
 // https://developer.mozilla.org/en/Extensions/Thunderbird/HowTos/Common_Thunderbird_Use_Cases/Compose_New_Message
 // global.addEventListener('compose-send-message', onSendMessage, true);
-})(window);
+
+}(window));
