@@ -7,7 +7,8 @@
 		dynamically, in the thunderbird plugin instead.
 		<link type="text/css" href="aloha/css/aloha.css" rel="stylesheet" />
 	-->
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
+	<script type="text/javascript"
+	        src="https://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
 	<script type="text/javascript" src="aloha/src/lib/aloha.js"
 	        data-aloha-plugins="extra/thunderbird,
 	                            extra/sourceview,
@@ -21,19 +22,20 @@
 	                            common/abbr,
 	                            common/highlighteditables,
 	                            common/align,
-	                            extra/cite,
+								extra/cite,
 	                            extra/metaview,
 	                            extra/formatlesspaste"></script>
 	<script>
 		window.Aloha || (window.Aloha = {});
 
 		Aloha.settings = {
-			logLevels: { 'error': true, 'warn': true, 'info': true,
-			             'debug': true, 'deprecated': true },
+			logLevels: { 'error': true, 'warn': true, 'info': false,
+			             'debug': false, 'deprecated': false },
 			errorhandling: false,
 			ribbon: false,
 			locale: 'en',
 			floatingmenu: { width: 630 },
+			sidebar: { disabled: false },
 			plugins: {
 				format: {
 					// all elements with no specific configuration get this
@@ -41,27 +43,6 @@
 					config: [ 'b', 'i', 'p', 'sub', 'sup', 'del', 'title',
 					          'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'pre',
 							  'removeFormat' ]
-				},
-				table: {
-					// all elements with no specific configuration are not
-					// allowed to insert tables
-					config: [ 'table' ],
-					tableConfig: [
-						{ name: 'hor-minimalist-a' },
-						{ name: 'box-table-a' },
-						{ name: 'hor-zebra' },
-					],
-					columnConfig: [
-						{ name: 'table-style-bigbold',  iconClass: 'aloha-button-col-bigbold' },
-						{ name: 'table-style-redwhite', iconClass: 'aloha-button-col-redwhite' }
-					],
-					rowConfig: [
-						{ name: 'table-style-bigbold',  iconClass: 'aloha-button-row-bigbold' },
-						{ name: 'table-style-redwhite', iconClass: 'aloha-button-row-redwhite' }
-					]
-				},
-				cite: {
-					referenceContainer: '#references'
 				}
 			}
 		};
